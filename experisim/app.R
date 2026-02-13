@@ -85,7 +85,7 @@ server <- function(input, output) {
         geom_histogram() +
         scale_x_continuous(limits = c(-3,3))
       
-    }
+    }, width = 400, height = 200
     )
     
     output$plotGrouped <- renderPlot({
@@ -98,7 +98,7 @@ server <- function(input, output) {
         scale_x_continuous(limits = c(-3,3)) +
         facet_grid(cols = vars(Group))
       
-    }
+    }, width = 400, height = 200
     )
     
     output$plotFindings <- renderPlot({
@@ -111,7 +111,7 @@ server <- function(input, output) {
         scale_x_continuous(limits = c(-3,3)) +
         facet_grid(cols = vars(Group))
       
-    }
+    }, width = 400, height = 200
     )
     
     output$descriptive <- renderTable({
