@@ -1,8 +1,27 @@
 library(shiny)
 library(dplyr)
 library(ggplot2)
+library(stringr)
 
 theme_set(theme_bw())
+
+format.apa.pval <- function(p) {
+  p %>%
+    round(digits = 3) %>%
+    format.pval(
+      nsmall = 3,
+      eps = 0.001) %>%
+    str_remove('0(?=\\.)') %>%
+    str_replace('\\< \\.', '\\<\\.')
+}
+
+report.apa.pval <- function(p) {
+  p.f <- p %>% format.apa.pval
+  if(p >= .001) {
+    return(paste0('p = ', p.f))
+  }
+  return(paste0('p ', p.f))
+}
 
 ui <- fluidPage(
 
@@ -28,7 +47,8 @@ ui <- fluidPage(
                         max = 200,
                         value = 20,
                         step = 2),
-            tableOutput('descriptive')
+            tableOutput('descriptive'),
+            textOutput('t.test')
         ),
 
         mainPanel(
@@ -48,6 +68,11 @@ server <- function(input, output) {
       Initial_score = rnorm(n = input$n, sd = input$sd),
       Final_score = Initial_score + ifelse(Group == 0, 0, input$effect)
     )
+  )
+  
+  results <- reactive(
+    d.participants() %>%
+      t.test(Final_score ~ Group, data = .)
   )
 
     output$plotInitial <- renderPlot({
@@ -105,6 +130,21 @@ server <- function(input, output) {
         )
       
     })
+    
+    output$t.test <- renderText({
+      
+      paste0(
+        't(', results()$parameter %>% round(digits = 2),
+        ') = ', results()$statistic %>% round(digits = 2),
+        ', ', results()$p.value %>% report.apa.pval,
+        ' 95% CI[', results()$conf.int[1] %>% round(digits = 2),
+        ', ', results()$conf.int[2] %>% round(digits = 2),
+        ']'
+      )
+      
+    })
 }
 
 shinyApp(ui = ui, server = server)
+
+
