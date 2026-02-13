@@ -1,51 +1,91 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
+library(dplyr)
+library(ggplot2)
 
-# Define UI for application that draws a histogram
+theme_set(theme_bw())
+
 ui <- fluidPage(
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel('Experiment Simulator'),
 
-    # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            sliderInput("effect",
+                        'Effect size:',
+                        min = -1,
+                        max = 1,
+                        value = 0,
+                        step = .1),
+            sliderInput('sd',
+                        'Population SD:',
+                        min = .1,
+                        max = 1,
+                        value = 0,
+                        step = .1),
+            sliderInput('n',
+                        'No. of participants:',
+                        min = 2,
+                        max = 200,
+                        value = 20,
+                        step = 2),
         ),
 
-        # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+           plotOutput('plotInitial'),
+           plotOutput('plotGrouped'),
+           plotOutput('plotFindings')
         )
     )
 )
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
+  
+  d.participants <- reactive(
+    tibble(
+      Group = c(
+        rep(0, input$n/2), rep(1, input$n/2)), 
+      Initial_score = rnorm(n = input$n, sd = input$sd),
+      Final_score = Initial_score + ifelse(Group == 0, 0, input$effect)
+    )
+  )
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+    output$plotInitial <- renderPlot({
+      
+      d.participants() %>%
+        ggplot(
+          aes(x = Initial_score)
+        ) +
+        geom_histogram() +
+        scale_x_continuous(limits = c(-3,3))
+      
+    }
+    )
+    
+    output$plotGrouped <- renderPlot({
+      
+      d.participants() %>%
+        ggplot(
+          aes(x = Initial_score)
+        ) +
+        geom_histogram() +
+        scale_x_continuous(limits = c(-3,3)) +
+        facet_grid(cols = vars(Group))
+      
+    }
+    )
+    
+    output$plotFindings <- renderPlot({
+      
+      d.participants() %>%
+        ggplot(
+          aes(x = Final_score)
+        ) +
+        geom_histogram() +
+        scale_x_continuous(limits = c(-3,3)) +
+        facet_grid(cols = vars(Group))
+      
+    }
+    )
 }
 
-# Run the application 
 shinyApp(ui = ui, server = server)
