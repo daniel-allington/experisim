@@ -47,6 +47,7 @@ ui <- fluidPage(
                         max = 200,
                         value = 20,
                         step = 2),
+            submitButton('Run experiment'),
             tableOutput('descriptive'),
             textOutput('t.test')
         ),
