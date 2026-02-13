@@ -1,0 +1,20 @@
+---
+title: "Experisim development"
+author: "Daniel Allington"
+date: "2026-02-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(dplyr)
+library(ggplot2)
+```
+
+Sketching out how the Experisim Shiny app is going to work.
+
+```{r}
+
+```
+
