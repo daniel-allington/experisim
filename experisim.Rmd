@@ -10,11 +10,79 @@ knitr::opts_chunk$set(echo = FALSE)
 
 library(dplyr)
 library(ggplot2)
+
+theme_set(theme_bw())
 ```
 
 Sketching out how the Experisim Shiny app is going to work.
 
+# Setting parameters
 ```{r}
-
+n.participants <- 100
+sd.participants <- 1
+true.effect <- 0.1
+d.participants <- tibble(
+  Initial_score = rnorm(n = n.participants, sd = sd.participants),
+  Group = sample(c(0,1), size = n.participants, replace = TRUE),
+  Final_score = Initial_score + ifelse(Group == 0, 0, true.effect)
+)
 ```
 
+Number of participants: `r n.participants`
+
+Diversity of participants: `r sd.participants`
+
+True effect: `r true.effect`
+
+# Starting position
+```{r}
+d.participants %>%
+  ggplot(
+    aes(x = Initial_score)
+  ) +
+  geom_histogram(bins = 10)
+```
+
+# Division into groups
+```{r}
+d.participants %>%
+  ggplot(
+    aes(x = Initial_score)
+  ) +
+  geom_histogram(bins = 10) +
+  facet_grid(cols = vars(Group))
+```
+
+# Following treatment
+```{r}
+d.participants %>%
+  ggplot(
+    aes(x = Final_score)
+  ) +
+  geom_histogram(bins = 10) +
+  facet_grid(cols = vars(Group))
+```
+
+```{r}
+d.participants %>%
+  group_by(Group) %>%
+  summarise(
+    n = n(), M = mean(Final_score), SD = sd(Final_score),
+    .groups = 'drop') %>%
+  mutate(
+    across(
+      .cols = c(M, SD),
+      .fns = ~ round(., digits = 2)
+    )
+  )
+  
+```
+
+# t-test
+```{r}
+d.participants %>%
+  t.test(
+    Final_score ~ Group,
+    data = .
+  )
+```
