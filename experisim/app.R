@@ -28,6 +28,7 @@ ui <- fluidPage(
                         max = 200,
                         value = 20,
                         step = 2),
+            tableOutput('descriptive')
         ),
 
         mainPanel(
@@ -86,6 +87,24 @@ server <- function(input, output) {
       
     }
     )
+    
+    output$descriptive <- renderTable({
+      
+      d.participants() %>%
+        group_by(Group) %>%
+        summarise(
+          n = n(),
+          M = mean(Final_score),
+          SD = sd(Final_score)
+        ) %>% 
+        mutate(
+          across(
+            .cols = c(M, SD),
+            .fns = ~ round(., digits = 2)
+          )
+        )
+      
+    })
 }
 
 shinyApp(ui = ui, server = server)
