@@ -5,22 +5,20 @@ library(stringr)
 
 theme_set(theme_bw())
 
-format.apa.pval <- function(p) {
-  p %>%
-    round(digits = 3) %>%
-    format.pval(
-      nsmall = 3,
-      eps = 0.001) %>%
-    str_remove('0(?=\\.)') %>%
-    str_replace('\\< \\.', '\\<\\.')
-}
-
 report.apa.pval <- function(p) {
-  p.f <- p %>% format.apa.pval
   if(p >= .001) {
-    return(paste0('p = ', p.f))
+    return(
+      paste0(
+        'p = ',
+        p %>%
+          format.pval(
+            nsmall = 3,
+            eps = .001
+          )
+        )
+      )
   }
-  return(paste0('p ', p.f))
+  return('p < .001')
 }
 
 ui <- fluidPage(
@@ -124,6 +122,7 @@ server <- function(input, output) {
           SD = sd(Final_score)
         ) %>% 
         mutate(
+          Group = Group %>% as.character,
           across(
             .cols = c(M, SD),
             .fns = ~ round(., digits = 2)
@@ -147,5 +146,3 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
-
-
