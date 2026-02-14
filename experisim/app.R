@@ -46,7 +46,7 @@ ui <- fluidPage(
                         max = 200,
                         value = 20,
                         step = 2),
-            submitButton('Run experiment'),
+            actionButton('collect', 'Run experiment'),
             tableOutput('descriptive'),
             textOutput('t.test')
         ),
@@ -61,13 +61,16 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  d.participants <- reactive(
+  d.participants <- eventReactive(
+    input$collect,
+    {
     tibble(
       Group = c(
         rep('Treatment', input$n/2), rep('Control', input$n/2)), 
       Initial_score = rnorm(n = input$n, sd = input$sd),
       Final_score = Initial_score + ifelse(Group == 'Control', 0, input$effect)
     )
+    }
   )
   
   results <- reactive(
