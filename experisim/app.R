@@ -72,7 +72,7 @@ server <- function(input, output) {
   
   results <- reactive(
     d.participants() %>%
-      t.test(Final_score ~ Group, data = .)
+        t.test(Final_score ~ Group, data = .)
   )
 
     output$plotInitial <- renderPlot({
@@ -133,7 +133,7 @@ server <- function(input, output) {
     })
     
     output$t.test <- renderText({
-      
+      if(nrow(d.participants()) < 3) {return('')}
       paste0(
         't(', results()$parameter %>% round(digits = 2),
         ') = ', results()$statistic %>% round(digits = 2),
