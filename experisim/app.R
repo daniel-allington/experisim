@@ -12,6 +12,7 @@ report.apa.pval <- function(p) {
         'p = ',
         p %>%
           format.pval(
+            digits = 3,
             nsmall = 3,
             eps = .001
           )
