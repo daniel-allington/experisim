@@ -64,9 +64,9 @@ server <- function(input, output) {
   d.participants <- reactive(
     tibble(
       Group = c(
-        rep(0, input$n/2), rep(1, input$n/2)), 
+        rep('Treatment', input$n/2), rep('Control', input$n/2)), 
       Initial_score = rnorm(n = input$n, sd = input$sd),
-      Final_score = Initial_score + ifelse(Group == 0, 0, input$effect)
+      Final_score = Initial_score + ifelse(Group == 'Control', 0, input$effect)
     )
   )
   
