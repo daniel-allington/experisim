@@ -1,7 +1,6 @@
 library(shiny)
 library(dplyr)
 library(ggplot2)
-library(stringr)
 
 theme_set(theme_bw())
 
@@ -44,7 +43,7 @@ ui <- fluidPage(
                         'No. of participants:',
                         min = 2,
                         max = 200,
-                        value = 20,
+                        value = 2,
                         step = 2),
             actionButton('collect', 'Run experiment'),
             tableOutput('descriptive'),
@@ -85,7 +84,11 @@ server <- function(input, output) {
           aes(x = Initial_score)
         ) +
         geom_histogram() +
-        scale_x_continuous(limits = c(-3,3))
+        scale_x_continuous(name = NULL, limits = c(-3,3)) +
+        scale_y_continuous(
+          name = NULL, 
+          labels = scales::label_number(accuracy = 1)) +
+        ggtitle('Intrinsic variation')
       
     }, width = 400, height = 200
     )
@@ -97,9 +100,13 @@ server <- function(input, output) {
           aes(x = Initial_score)
         ) +
         geom_histogram() +
-        scale_x_continuous(limits = c(-3,3)) +
-        facet_grid(cols = vars(Group))
-      
+        scale_x_continuous(name = NULL, limits = c(-3,3)) +
+        scale_y_continuous(
+          name = NULL,
+          labels = scales::label_number(accuracy = 1)) +
+        facet_grid(cols = vars(Group)) +
+        ggtitle('Intrinsic variation, grouped')
+  
     }, width = 400, height = 200
     )
     
@@ -110,8 +117,12 @@ server <- function(input, output) {
           aes(x = Final_score)
         ) +
         geom_histogram() +
-        scale_x_continuous(limits = c(-3,3)) +
-        facet_grid(cols = vars(Group))
+        scale_x_continuous(name = NULL, limits = c(-3,3)) +
+        scale_y_continuous(
+          name = NULL,
+          labels = scales::label_number(accuracy = 1)) +
+        facet_grid(cols = vars(Group)) +
+        ggtitle('Intrinsic variation plus effect of treatment')
       
     }, width = 400, height = 200
     )
