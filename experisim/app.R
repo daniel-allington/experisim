@@ -52,9 +52,9 @@ ui <- fluidPage(
         ),
 
         mainPanel(
-           plotOutput('plotInitial'),
-           plotOutput('plotGrouped'),
-           plotOutput('plotFindings')
+           plotOutput('plotInitial', width = '400px', height = '200px'),
+           plotOutput('plotGrouped', width = '400px', height = '200px'),
+           plotOutput('plotFindings', width = '400px', height = '200px')
         )
     )
 )
