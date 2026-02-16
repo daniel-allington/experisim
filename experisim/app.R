@@ -8,7 +8,7 @@ report.apa.pval <- function(p) {
   if(p >= .001) {
     return(
       paste0(
-        'p = ',
+        '<i>p</i> = ',
         p %>%
           format.pval(
             digits = 3,
@@ -18,7 +18,7 @@ report.apa.pval <- function(p) {
         )
       )
   }
-  return('p < .001')
+  return('<i>p</i> < .001')
 }
 
 ui <- fluidPage(
@@ -47,7 +47,7 @@ ui <- fluidPage(
                         step = 2),
             actionButton('collect', 'Run experiment'),
             tableOutput('descriptive'),
-            textOutput('t.test')
+            uiOutput('t.test')
         ),
 
         mainPanel(
@@ -154,15 +154,19 @@ server <- function(input, output) {
       
     })
     
-    output$t.test <- renderText({
+    output$t.test <- renderUI({
+      
       if(nrow(d.participants()) < 3) {return('')}
-      paste0(
-        't(', results()$parameter %>% round(digits = 2),
-        ') = ', results()$statistic %>% round(digits = 2),
-        ', ', results()$p.value %>% report.apa.pval,
-        ' 95% CI[', results()$conf.int[1] %>% round(digits = 2),
-        ', ', results()$conf.int[2] %>% round(digits = 2),
-        ']'
+      
+      HTML(
+        paste0(
+          '<i>t</i>(', results()$parameter %>% round(digits = 2),
+          ') = ', results()$statistic %>% round(digits = 2),
+          ', ', results()$p.value %>% report.apa.pval,
+          '<br>95% CI[', results()$conf.int[1] %>% round(digits = 2),
+          ', ', results()$conf.int[2] %>% round(digits = 2),
+          ']'
+        )
       )
       
     })
