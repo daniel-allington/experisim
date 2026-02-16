@@ -18,11 +18,9 @@ integer.breaks <- function(x) {
     return(seq(0, x, length.out = divisor + 1))
   }
   return(
-    seq(0, x+1, length.out = best.divisor(x + 1) + 1)
+    seq(0, x + 1, length.out = best.divisor(x + 1) + 1)
   )
 }
-
-(10:30) %>% map(integer.breaks)
 
 report.apa.pval <- function(p) {
   if(p >= .001) {
@@ -106,15 +104,17 @@ server <- function(input, output) {
         ggplot(
           aes(x = Initial_score)
         ) +
-        geom_histogram() +
+        geom_histogram(binwidth = 0.1) +
         scale_x_continuous(name = NULL, limits = c(-3,3))
       
       ymax(ggplot_build(initial.plot)$data[[1]]$count %>% max)
       
+      breaks <- integer.breaks(ymax())
+      
       initial.plot +
         scale_y_continuous(
           name = NULL, 
-          breaks = integer.breaks(ymax())) +
+          breaks = breaks) +
         ggtitle('Intrinsic variation')
       
     }, width = 400, height = 200
@@ -126,7 +126,7 @@ server <- function(input, output) {
         ggplot(
           aes(x = Initial_score)
         ) +
-        geom_histogram() +
+        geom_histogram(binwidth = 0.1) +
         scale_x_continuous(name = NULL, limits = c(-3,3)) +
         scale_y_continuous(
           name = NULL, 
@@ -144,7 +144,7 @@ server <- function(input, output) {
         ggplot(
           aes(x = Final_score)
         ) +
-        geom_histogram() +
+        geom_histogram(binwidth = 0.1) +
         scale_x_continuous(name = NULL, limits = c(-3,3)) +
         scale_y_continuous(
           name = NULL, 
