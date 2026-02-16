@@ -46,17 +46,11 @@ ui <- fluidPage(
 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("effect",
-                        'Effect size:',
-                        min = -1,
-                        max = 1,
-                        value = 0,
-                        step = .1),
             sliderInput('sd',
                         'Population SD:',
                         min = .1,
                         max = 1,
-                        value = 0,
+                        value = 1,
                         step = .1),
             sliderInput('n',
                         'No. of participants:',
@@ -64,6 +58,12 @@ ui <- fluidPage(
                         max = 200,
                         value = 2,
                         step = 2),
+            sliderInput("effect",
+                        'Effect size:',
+                        min = -1,
+                        max = 1,
+                        value = 0,
+                        step = .1),
             actionButton('collect', 'Run experiment'),
             tableOutput('descriptive'),
             uiOutput('t.test')
