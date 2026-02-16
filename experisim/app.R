@@ -4,6 +4,12 @@ library(ggplot2)
 
 theme_set(theme_bw())
 
+integer.breaks <- function(x) {
+  if((x/2)!=round(x/2)) {x <- x + 1}
+  breaks <- seq(0, x, length.out = 5)
+  breaks[breaks == round(breaks)]
+}
+
 report.apa.pval <- function(p) {
   if(p >= .001) {
     return(
@@ -86,15 +92,15 @@ server <- function(input, output) {
           aes(x = Initial_score)
         ) +
         geom_histogram() +
-        scale_x_continuous(name = NULL, limits = c(-3,3)) +
-        scale_y_continuous(
-          name = NULL, 
-          labels = scales::label_number(accuracy = 1)) +
-        ggtitle('Intrinsic variation')
+        scale_x_continuous(name = NULL, limits = c(-3,3))
       
       ymax(ggplot_build(initial.plot)$data[[1]]$count %>% max)
       
-      initial.plot
+      initial.plot +
+        scale_y_continuous(
+          name = NULL, 
+          breaks = integer.breaks(ymax())) +
+        ggtitle('Intrinsic variation')
       
     }, width = 400, height = 200
     )
@@ -109,8 +115,8 @@ server <- function(input, output) {
         scale_x_continuous(name = NULL, limits = c(-3,3)) +
         scale_y_continuous(
           name = NULL, 
-          limits = c(0, ymax()),
-          labels = scales::label_number(accuracy = 1)) +
+          breaks = integer.breaks(ymax()),
+          limits = c(0, ymax())) +
         facet_grid(cols = vars(Group)) +
         ggtitle('Intrinsic variation, grouped')
   
@@ -127,8 +133,8 @@ server <- function(input, output) {
         scale_x_continuous(name = NULL, limits = c(-3,3)) +
         scale_y_continuous(
           name = NULL, 
-          limits = c(0, ymax()),
-          labels = scales::label_number(accuracy = 1)) +
+          breaks = integer.breaks(ymax()),
+          limits = c(0, ymax())) +
         facet_grid(cols = vars(Group)) +
         ggtitle('Intrinsic variation plus effect of treatment')
       
