@@ -16,6 +16,7 @@ report.apa.pval <- function(p) {
       paste0(
         '<i>p</i> = ',
         p %>%
+          round(digits = 3) %>%
           format.pval(
             digits = 3,
             nsmall = 3,
