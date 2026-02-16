@@ -22,6 +22,13 @@ integer.breaks <- function(x) {
   )
 }
 
+minor.breaks <- function(x) {
+  if(length(x) > 4) {
+    return(NULL)
+  } 
+  waiver()
+}
+
 report.apa.pval <- function(p) {
   if(p >= .001) {
     return(
@@ -58,7 +65,7 @@ ui <- fluidPage(
                         max = 200,
                         value = 2,
                         step = 2),
-            sliderInput("effect",
+            sliderInput('effect',
                         'Effect size:',
                         min = -1,
                         max = 1,
@@ -109,12 +116,11 @@ server <- function(input, output) {
       
       ymax(ggplot_build(initial.plot)$data[[1]]$count %>% max)
       
-      breaks <- integer.breaks(ymax())
-      
       initial.plot +
         scale_y_continuous(
           name = NULL, 
-          breaks = breaks) +
+          breaks = integer.breaks(ymax()),
+          minor_breaks = minor.breaks(integer.breaks(ymax()))) +
         ggtitle('Intrinsic variation')
       
     }, width = 400, height = 200
@@ -131,6 +137,7 @@ server <- function(input, output) {
         scale_y_continuous(
           name = NULL, 
           breaks = integer.breaks(ymax()),
+          minor_breaks = minor.breaks(integer.breaks(ymax())),
           limits = c(0, ymax())) +
         facet_grid(cols = vars(Group)) +
         ggtitle('Intrinsic variation, grouped')
@@ -149,6 +156,7 @@ server <- function(input, output) {
         scale_y_continuous(
           name = NULL, 
           breaks = integer.breaks(ymax()),
+          minor_breaks = minor.breaks(integer.breaks(ymax())),
           limits = c(0, ymax())) +
         facet_grid(cols = vars(Group)) +
         ggtitle('Intrinsic variation plus effect of treatment')
