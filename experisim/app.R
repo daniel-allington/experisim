@@ -72,6 +72,8 @@ server <- function(input, output) {
     }
   )
   
+  ymax <- reactiveVal()
+  
   results <- reactive(
     d.participants() %>%
         t.test(Final_score ~ Group, data = .)
@@ -79,7 +81,7 @@ server <- function(input, output) {
 
     output$plotInitial <- renderPlot({
       
-      d.participants() %>%
+      initial.plot <- d.participants() %>%
         ggplot(
           aes(x = Initial_score)
         ) +
@@ -89,6 +91,10 @@ server <- function(input, output) {
           name = NULL, 
           labels = scales::label_number(accuracy = 1)) +
         ggtitle('Intrinsic variation')
+      
+      ymax(ggplot_build(initial.plot)$data[[1]]$count %>% max)
+      
+      initial.plot
       
     }, width = 400, height = 200
     )
@@ -102,7 +108,8 @@ server <- function(input, output) {
         geom_histogram() +
         scale_x_continuous(name = NULL, limits = c(-3,3)) +
         scale_y_continuous(
-          name = NULL,
+          name = NULL, 
+          limits = c(0, ymax()),
           labels = scales::label_number(accuracy = 1)) +
         facet_grid(cols = vars(Group)) +
         ggtitle('Intrinsic variation, grouped')
@@ -119,7 +126,8 @@ server <- function(input, output) {
         geom_histogram() +
         scale_x_continuous(name = NULL, limits = c(-3,3)) +
         scale_y_continuous(
-          name = NULL,
+          name = NULL, 
+          limits = c(0, ymax()),
           labels = scales::label_number(accuracy = 1)) +
         facet_grid(cols = vars(Group)) +
         ggtitle('Intrinsic variation plus effect of treatment')
