@@ -1,14 +1,28 @@
+library(numbers)
 library(shiny)
 library(dplyr)
 library(ggplot2)
 
 theme_set(theme_bw())
 
-integer.breaks <- function(x) {
-  if((x/2)!=round(x/2)) {x <- x + 1}
-  breaks <- seq(0, x, length.out = 5)
-  breaks[breaks == round(breaks)]
+best.divisor <- function(x) {
+  divisors <- divisors(x)
+  divisors <- divisors[divisors <= 5]
+  max(divisors)
 }
+
+integer.breaks <- function(x) {
+  if(x <= 5) {return(0:x)} 
+  divisor <- best.divisor(x)
+  if(divisor > 1) {
+    return(seq(0, x, length.out = divisor + 1))
+  }
+  return(
+    seq(0, x+1, length.out = best.divisor(x + 1) + 1)
+  )
+}
+
+(10:30) %>% map(integer.breaks)
 
 report.apa.pval <- function(p) {
   if(p >= .001) {
