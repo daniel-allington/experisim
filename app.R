@@ -2,6 +2,7 @@ library(numbers)
 library(shiny)
 library(dplyr)
 library(ggplot2)
+library(stringr)
 
 theme_set(theme_bw())
 
@@ -40,7 +41,8 @@ report.apa.pval <- function(p) {
             digits = 3,
             nsmall = 3,
             eps = .001
-          )
+          ) %>%
+          str_remove('^0')
         )
       )
   }
