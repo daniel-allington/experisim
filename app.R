@@ -102,7 +102,11 @@ server <- function(input, output) {
   
   results <- reactive(
     d.participants() %>%
-      t.test(Final_score ~ Group == 'Control', data = .)
+      t.test(
+        Final_score ~ Group == 'Control', 
+        var.equal = FALSE,
+        conf.level = .95,
+        data = .)
   )
 
     output$plotInitial <- renderPlot({
