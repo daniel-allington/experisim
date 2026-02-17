@@ -192,7 +192,7 @@ server <- function(input, output) {
           '<i>t</i>(', results()$parameter %>% round(digits = 2),
           ') = ', results()$statistic %>% round(digits = 2),
           ', ', results()$p.value %>% report.apa.pval,
-          '<br>95% CI[', results()$conf.int[1] %>% round(digits = 2),
+          '<br>95% CI [', results()$conf.int[1] %>% round(digits = 2),
           ', ', results()$conf.int[2] %>% round(digits = 2),
           ']'
         )
