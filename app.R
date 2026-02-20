@@ -57,9 +57,9 @@ ui <- fluidPage(
         sidebarPanel(
             sliderInput('sd',
                         'Population SD:',
-                        min = .1,
+                        min = 0,
                         max = 1,
-                        value = 1,
+                        value = 0,
                         step = .1),
             sliderInput('n',
                         'No. of participants:',
@@ -191,7 +191,7 @@ server <- function(input, output) {
     
     output$t.test <- renderUI({
       
-      if(nrow(d.participants()) < 3) {return('')}
+      if(nrow(d.participants()) < 3 | input$sd == 0) {return('')}
       
       HTML(
         paste0(
